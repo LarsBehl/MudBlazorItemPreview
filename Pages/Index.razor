@@ -1,50 +1,38 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
-<MudCard>
-    <MudCardContent>
-        <MudDropContainer T="DropItem" Items="_items"
-            ItemsSelector="@((item,dropzone) => item.Selector == dropzone)" ItemDropped="ItemUpdated">
-            <ChildContent>
-                @for (int i = 0; i < LastZoneId; i++)
-                {
-                    string id = i.ToString();
-                    <MudDropZone T="DropItem" Identifier="@id" Class="flex-grow-1" />
-                }
-            </ChildContent>
-            <ItemRenderer>
-                <div style="display: flex; align-items: center;">
-                    @context.Name
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" />
-                </div>
-            </ItemRenderer>
-        </MudDropContainer>
-    </MudCardContent>
-</MudCard>
-
+<MudDropContainer T="DropItem" Items="_items" ItemsSelector="@((item,dropzone) => item.Identifier == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-wrap flex-grow-1">
+    <ChildContent>
+        <MudDropZone T="DropItem" Identifier="Drop Zone 1" Class="rounded mud-background-gray pa-6 ma-8 flex-grow-1">
+            <MudText Typo="Typo.h6" Class="mb-4">Drop Zone 1</MudText>
+         </MudDropZone>
+        <MudDropZone T="DropItem" Identifier="Drop Zone 2" Class="rounded mud-background-gray pa-6 ma-8 flex-grow-1">
+            <MudText Typo="Typo.h6" Class="mb-4">Drop Zone 2</MudText>
+        </MudDropZone>
+    </ChildContent>
+    <ItemRenderer>
+        <div>
+            <span>@context.Name</span>
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" />
+        </div>
+    </ItemRenderer>
+</MudDropContainer>
 
 @code {
-    public int LastZoneId { get; set; } = 5;
     private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
     {
-        DropItem? item = this._items.SingleOrDefault(i => i.Selector == dropItem.DropzoneIdentifier);
-        if (item is not null)
-            item.Selector = dropItem.Item.Selector;
-        dropItem.Item.Selector = dropItem.DropzoneIdentifier;
+        dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
     }
-
+    
     private List<DropItem> _items = new()
     {
-        new DropItem() { Name = "Item 1", Selector = "1" },
-        new DropItem() { Name = "Item 2", Selector = "2" },
-        new DropItem() { Name = "Item 3", Selector = "3" },
-        new DropItem() { Name = "Item 4", Selector = "4" },
-        new DropItem() { Name = "Item 5", Selector = "5" },
+        new DropItem(){ Name = "Drag me!", Identifier = "Drop Zone 1" },
+        new DropItem(){ Name = "Or me!", Identifier = "Drop Zone 2" },
+        new DropItem(){ Name = "Just Mud", Identifier = "Drop Zone 1" },
     };
-
+    
     public class DropItem
     {
         public string Name { get; init; }
-        public string Selector { get; set; }
+        public string Identifier { get; set; }
     }
 }
