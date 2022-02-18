@@ -1,0 +1,50 @@
+﻿@page "/"
+
+<PageTitle>Index</PageTitle>
+<MudCard>
+    <MudCardContent>
+        <MudDropContainer T="DropItem" Items="_items"
+            ItemsSelector="@((item,dropzone) => item.Selector == dropzone)" ItemDropped="ItemUpdated">
+            <ChildContent>
+                @for (int i = 0; i < LastZoneId; i++)
+                {
+                    string id = i.ToString();
+                    <MudDropZone T="DropItem" Identifier="@id" Class="flex-grow-1" />
+                }
+            </ChildContent>
+            <ItemRenderer>
+                <div style="display: flex; align-items: center;">
+                    @context.Name
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" />
+                </div>
+            </ItemRenderer>
+        </MudDropContainer>
+    </MudCardContent>
+</MudCard>
+
+
+@code {
+    public int LastZoneId { get; set; } = 5;
+    private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
+    {
+        DropItem? item = this._items.SingleOrDefault(i => i.Selector == dropItem.DropzoneIdentifier);
+        if (item is not null)
+            item.Selector = dropItem.Item.Selector;
+        dropItem.Item.Selector = dropItem.DropzoneIdentifier;
+    }
+
+    private List<DropItem> _items = new()
+    {
+        new DropItem() { Name = "Item 1", Selector = "1" },
+        new DropItem() { Name = "Item 2", Selector = "2" },
+        new DropItem() { Name = "Item 3", Selector = "3" },
+        new DropItem() { Name = "Item 4", Selector = "4" },
+        new DropItem() { Name = "Item 5", Selector = "5" },
+    };
+
+    public class DropItem
+    {
+        public string Name { get; init; }
+        public string Selector { get; set; }
+    }
+}
